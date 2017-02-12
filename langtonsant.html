@@ -1,0 +1,109 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<style>
+			table {
+				border-spacing: 0px;
+			}
+			td {
+				width: 6px;
+				height: 6px;
+				border: 0px;
+				padding: 0px;
+				border-spacing: 0px;
+			}
+			td.white {
+				background-color: rgb(255,255,255);
+			}
+			td.black {
+				background-color: rgb(0,0,0);
+			}
+		</style>
+	</head>
+	<body>
+		<table id="t">
+		</table>
+		<!--<select id="dropdown" onchange="dropdown()">
+			<option disabled selected value> -- select an option -- </option>
+		</select>-->
+		<button onClick="javascript:antmove();">
+			Step
+		</button>
+		<button onClick="javascript:stop();">
+			Stop
+		</button>
+		<button onClick="javascript:play();">
+			Play
+		</button>
+		<input type="range" min=10 max=500 step=10 name="slider" onchange="speed = 500-this.value; javascript:stop();javascript:play();">
+		
+		<script>
+			var size = 100;
+			var halfsize = Math.round(size/2);
+			var speed = 250;
+			var draw = false;
+			var playiv;
+			var x = y = halfsize;
+			var direction = 0;
+			table = document.getElementById("t");
+			
+			function dropdown() {
+				// Maakt grid volgens keuze gebruiker
+				choice = document.getElementById("dropdown").value;
+				switch(choice) {
+					default:
+						break;
+				}
+			}
+			
+			function antmove() {
+				//console.log("x:" + x + ", y:" + " " + y);
+				//console.log("direction: " + direction);
+				color = document.getElementById("["+x+","+y+"]").className;
+				//console.log(color);
+				switch(color) {
+					case 'white':
+						direction = (direction + 1) % 4;
+						toggleCell(x, y, 'black');
+						break;
+					case 'black':
+						direction = (direction + 3) % 4;
+						toggleCell(x, y, 'white');
+						break;
+					default:
+						break;
+					}
+				if (direction == 0) {x--;}
+				if (direction == 1) {y++;}
+				if (direction == 2) {x++;}
+				if (direction == 3) {y--;}
+				//console.log("new x:" + x + ", y:" + " " + y);
+				//console.log("new direction: " + direction);
+				if (Math.min(x, y) < 0 || Math.max(x, y) == size) {stop();}
+			}
+			
+			function toggleCell(x, y, toggle) {
+				document.getElementById("["+x+","+y+"]").className = toggle;
+			}
+
+			for (var i = 0; i < size; i++) {
+				row = table.insertRow(i);
+				for (var j = 0; j < size; j++) {
+					cell = row.insertCell(j);
+					cell.id = "["+i+","+j+"]";
+					cell.innerHTML = " ";
+					cell.className = "white";
+				}
+			}
+
+			function play(){
+				playiv = setInterval(antmove, speed);
+				console.log(speed);
+			}
+
+			function stop(){
+				clearInterval(playiv);
+			}
+		</script>
+	</body>
+</html>
