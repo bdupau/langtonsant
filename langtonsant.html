@@ -8,24 +8,30 @@
 			td {
 				width: 6px;
 				height: 6px;
-				border: 0px;
 				padding: 0px;
-				border-spacing: 0px;
 			}
-			td.white {
-				background-color: rgb(255,255,255);
-			}
-			td.black {
-				background-color: rgb(0,0,0);
-			}
+			td.color0 {	background-color: rgb(255, 255, 255); }
+			td.color1 { background-color: rgb(0,   0,   0  ); }
+			td.color2 { background-color: rgb(255, 0,   0  ); }
+			td.color3 { background-color: rgb(0,   255, 0  ); }
+			td.color4 { background-color: rgb(0,   0,   255); }
+			td.color5 { background-color: rgb(255, 255, 0  ); }
+			td.color6 { background-color: rgb(0,   255, 255); }
+			td.color7 { background-color: rgb(255, 0,   255); }
 		</style>
 	</head>
 	<body>
 		<table id="t">
 		</table>
-		<!--<select id="dropdown" onchange="dropdown()">
-			<option disabled selected value> -- select an option -- </option>
-		</select>-->
+		<select id="dropdown" onchange="dropdown()">
+			<option value="2">Two colors</option>
+			<option value="3">Three colors</option>
+			<option value="4">Four colors</option>
+			<option value="5">Five colors</option>
+			<option value="6">Six colors</option>
+			<option value="7">Seven colors</option>
+			<option value="8">Eight colors</option>
+		</select>
 		<button onClick="javascript:antmove();">
 			Step
 		</button>
@@ -36,74 +42,57 @@
 			Play
 		</button>
 		<input type="range" min=10 max=500 step=10 name="slider" onchange="speed = 500-this.value; javascript:stop();javascript:play();">
-		
 		<script>
-			var size = 100;
-			var halfsize = Math.round(size/2);
-			var speed = 250;
-			var draw = false;
 			var playiv;
-			var x = y = halfsize;
+			var size = 75;
+			var speed = 250;
+			var colors = 2;
+			var x, y;
 			var direction = 0;
 			table = document.getElementById("t");
 			
 			function dropdown() {
-				// Maakt grid volgens keuze gebruiker
 				choice = document.getElementById("dropdown").value;
-				switch(choice) {
-					default:
-						break;
-				}
+				colors = parseInt(choice);
+				reset();
 			}
 			
 			function antmove() {
-				//console.log("x:" + x + ", y:" + " " + y);
-				//console.log("direction: " + direction);
-				color = document.getElementById("["+x+","+y+"]").className;
-				//console.log(color);
-				switch(color) {
-					case 'white':
-						direction = (direction + 1) % 4;
-						toggleCell(x, y, 'black');
-						break;
-					case 'black':
-						direction = (direction + 3) % 4;
-						toggleCell(x, y, 'white');
-						break;
-					default:
-						break;
-					}
-				if (direction == 0) {x--;}
-				if (direction == 1) {y++;}
-				if (direction == 2) {x++;}
-				if (direction == 3) {y--;}
-				//console.log("new x:" + x + ", y:" + " " + y);
-				//console.log("new direction: " + direction);
-				if (Math.min(x, y) < 0 || Math.max(x, y) == size) {stop();}
-			}
-			
-			function toggleCell(x, y, toggle) {
-				document.getElementById("["+x+","+y+"]").className = toggle;
+				classname = document.getElementById("["+x+","+y+"]").className;
+				color = parseInt(classname.substr(classname.length - 1));
+				direction = (direction + 1) % 4;
+				if (color % 2 > 0) { direction = (direction + 2) % 4; }
+				newcolor = (color + 1) % colors;
+				document.getElementById("["+x+","+y+"]").className = 'color' + newcolor;
+				if (direction == 0) { x--; }
+				if (direction == 1) { y++; }
+				if (direction == 2) { x++; }
+				if (direction == 3) { y--; }
+				if (Math.min(x, y) < 0 || Math.max(x, y) == size) { stop(); }
 			}
 
-			for (var i = 0; i < size; i++) {
-				row = table.insertRow(i);
-				for (var j = 0; j < size; j++) {
-					cell = row.insertCell(j);
-					cell.id = "["+i+","+j+"]";
-					cell.innerHTML = " ";
-					cell.className = "white";
+			function reset() {
+				table.innerHTML = " ";
+				for (var i = 0; i < size; i++) {
+					row = table.insertRow(i);
+					for (var j = 0; j < size; j++) {
+						cell = row.insertCell(j);
+						cell.id = "["+i+","+j+"]";
+						cell.className = "color0";
+					}
 				}
+				x = y = Math.round(size/2);
 			}
 
 			function play(){
 				playiv = setInterval(antmove, speed);
-				console.log(speed);
 			}
 
 			function stop(){
 				clearInterval(playiv);
 			}
+			
+			reset();
 		</script>
 	</body>
 </html>
